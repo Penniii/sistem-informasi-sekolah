@@ -55,7 +55,7 @@ Aplikasi web untuk mengelola kegiatan akademik sekolah menengah pertama: data si
 Prasyarat: Python 3 dan Git.
 
 ```powershell
-git clone https://github.com/⟨username⟩/sistem-informasi-sekolah.git
+git clone https://github.com/penniii/sistem-informasi-sekolah.git
 cd sistem-informasi-sekolah
 
 python -m venv venv
