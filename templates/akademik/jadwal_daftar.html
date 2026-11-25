@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block judul %}Jadwal Pelajaran{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Jadwal Pelajaran</h1>
+    {% if kelas %}<p>Kelas {{ kelas.nama }} · {{ kelas.tahun_ajaran }}</p>{% endif %}
+  </div>
+  <a href="{% url 'jadwal_tambah' %}{% if kelas %}?kelas={{ kelas.pk }}{% endif %}" class="tombol-aksi">+ Tambah Jadwal</a>
+</div>
+
+<form method="get" class="bilah-cari">
+  <select name="kelas" onchange="this.form.submit()">
+    {% for k in daftar_kelas %}
+      <option value="{{ k.pk }}" {% if kelas and k.pk == kelas.pk %}selected{% endif %}>{{ k }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+{% if not kelas %}
+  <div class="info">Belum ada kelas. Buat kelas dulu di menu Kelas.</div>
+{% elif not baris %}
+  <div class="info">Belum ada jam pelajaran. Atur dulu di menu Jam Pelajaran.</div>
+{% else %}
+  <div class="tabel-bungkus">
+    <table class="jadwal">
+      <thead>
+        <tr>
+          <th class="kolom-jam">Jam</th>
+          {% for nilai, nama in daftar_hari %}
+            <th>{{ nama }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in baris %}
+          <tr>
+            <td class="kolom-jam">
+              <strong>Jam ke-{{ b.jam.urutan }}</strong>
+              <small>{{ b.jam.mulai|time:"H:i" }}–{{ b.jam.selesai|time:"H:i" }}</small>
+            </td>
+            {% for s in b.sel %}
+              <td>
+                {% if s.jadwal %}
+                  <a href="{% url 'jadwal_ubah' s.jadwal.pk %}" class="sel-jadwal">
+                    <strong>{{ s.jadwal.mapel.nama }}</strong>
+                    <span>{{ s.jadwal.guru.nama }}</span>
+                  </a>
+                {% else %}
+                  <a href="{% url 'jadwal_tambah' %}?kelas={{ kelas.pk }}&hari={{ s.hari }}&jam={{ b.jam.pk }}" class="sel-kosong">+</a>
+                {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+{% endblock %}

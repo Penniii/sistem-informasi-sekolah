@@ -1,0 +1,13 @@
+{% if daftar %}
+  <ul class="batang">
+    {% for b in daftar %}
+      <li>
+        <span class="batang-label" title="{{ b.label }}">{{ b.label }}</span>
+        <div class="batang-trek"><div class="batang-isi" style="width: {{ b.persen }}%;"></div></div>
+        <span class="batang-nilai">{{ b.teks }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="redup">{{ kosong }}</p>
+{% endif %}

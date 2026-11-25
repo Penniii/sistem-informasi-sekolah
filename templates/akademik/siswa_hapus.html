@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block judul %}Hapus Siswa{% endblock %}
+
+{% block isi %}
+<div class="kartu-form">
+  <h1>Hapus siswa?</h1>
+  <p>
+    Anda akan menghapus <strong>{{ siswa.nama }}</strong> (NIS {{ siswa.nis }})
+    beserta akun loginnya dan catatan absensinya. Tindakan ini tidak bisa dibatalkan.  </p>
+  <form method="post" class="aksi-form">
+    {% csrf_token %}
+    <button type="submit" class="tombol-aksi tombol-bahaya">Ya, hapus</button>
+    <a href="{% url 'siswa_daftar' %}" class="tombol-batal">Batal</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+<div class="tabel-bungkus">
+  <table class="tabel">
+    <thead>
+      <tr><th>No</th><th>NIS</th><th>Nama</th><th>Kehadiran</th><th>Keterangan</th></tr>
+    </thead>
+    <tbody>
+      {% for b in baris %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ b.siswa.nis }}</td>
+          <td>{{ b.siswa.nama }}</td>
+          <td>
+            <div class="status-grup">
+              {% for nilai, nama in daftar_status %}
+                <label class="pil pil-{{ nilai|lower }}">
+                  <input type="radio" name="status_{{ b.siswa.pk }}" value="{{ nilai }}"
+                         {% if b.status == nilai %}checked{% endif %}>
+                  <span>{{ nama }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </td>
+          <td>
+            <input type="text" name="ket_{{ b.siswa.pk }}" value="{{ b.keterangan }}"
+                   maxlength="200" placeholder="Opsional" class="isian-kecil">
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="kosong">Belum ada siswa di kelas ini.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

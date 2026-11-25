@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block judul %}Isi Absensi Pelajaran{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>{{ jadwal.mapel.nama }}</h1>
+    <p>
+      Kelas {{ jadwal.kelas.nama }} · {{ jadwal.get_hari_display }}, {{ tanggal|date:"j F Y" }}
+      · Jam ke-{{ jadwal.jam.urutan }} ({{ jadwal.jam.mulai|time:"H:i" }}–{{ jadwal.jam.selesai|time:"H:i" }})
+      · {{ jadwal.guru.nama }}
+    </p>
+  </div>
+  <a href="{{ kembali }}" class="tombol-aksi tombol-sekunder">← Kembali</a>
+</div>
+
+<form method="post">
+  {% csrf_token %}
+  {% include 'akademik/_tabel_status.html' %}
+
+  {% if baris %}
+    <div class="aksi-form">
+      <button type="submit" class="tombol-aksi">Simpan Absensi</button>
+    </div>
+  {% endif %}
+</form>
+{% endblock %}

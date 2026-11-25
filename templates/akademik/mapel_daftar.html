@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block judul %}Mata Pelajaran{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Mata Pelajaran</h1>
+    <p>{{ daftar|length }} mata pelajaran</p>
+  </div>
+  <a href="{% url 'mapel_tambah' %}" class="tombol-aksi">+ Tambah Mata Pelajaran</a>
+</div>
+
+<div class="tabel-bungkus">
+  <table class="tabel">
+    <thead>
+      <tr><th>Kode</th><th>Nama</th><th>Aksi</th></tr>
+    </thead>
+    <tbody>
+      {% for m in daftar %}
+        <tr>
+          <td>{{ m.kode }}</td>
+          <td>{{ m.nama }}</td>
+          <td class="aksi">
+            <a href="{% url 'mapel_ubah' m.pk %}">Ubah</a>
+            <a href="{% url 'mapel_hapus' m.pk %}" class="bahaya">Hapus</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3" class="kosong">Belum ada mata pelajaran.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block judul %}{{ judul }}{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>{{ judul }}</h1>
+    {% if subjudul %}<p>{{ subjudul }}</p>{% endif %}
+  </div>
+</div>
+
+{% if catatan %}
+  <div class="info">{{ catatan }}</div>
+{% else %}
+  <div class="tabel-bungkus">
+    <table class="jadwal">
+      <thead>
+        <tr>
+          <th class="kolom-jam">Jam</th>
+          {% for nilai, nama in daftar_hari %}
+            <th>{{ nama }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in baris %}
+          <tr>
+            <td class="kolom-jam">
+              <strong>Jam ke-{{ b.jam.urutan }}</strong>
+              <small>{{ b.jam.mulai|time:"H:i" }}–{{ b.jam.selesai|time:"H:i" }}</small>
+            </td>
+            {% for s in b.sel %}
+              <td>
+                {% if s.jadwal %}
+                  <div class="sel-jadwal">
+                    <strong>{{ s.jadwal.mapel.nama }}</strong>
+                    <span>
+                      {% if mode == 'guru' %}Kelas {{ s.jadwal.kelas.nama }}{% else %}{{ s.jadwal.guru.nama }}{% endif %}
+                    </span>
+                  </div>
+                {% else %}
+                  <div class="sel-kosong"></div>
+                {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block judul %}Data Guru{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Data Guru</h1>
+    <p>{{ halaman.paginator.count }} guru ditemukan</p>
+  </div>
+  <a href="{% url 'guru_tambah' %}" class="tombol-aksi">+ Tambah Guru</a>
+</div>
+
+<form method="get" class="bilah-cari">
+  <input type="text" name="q" value="{{ kata_kunci }}" placeholder="Cari nama atau NIP...">
+  <button type="submit" class="tombol-aksi">Cari</button>
+</form>
+
+<div class="tabel-bungkus">
+  <table class="tabel">
+    <thead>
+      <tr><th>NIP / ID Guru</th><th>Nama</th><th>L/P</th><th>No. HP</th><th>Aksi</th></tr>
+    </thead>
+    <tbody>
+      {% for g in halaman %}
+        <tr>
+          <td>{{ g.nip }}</td>
+          <td>{{ g.nama }}</td>
+          <td>{{ g.jenis_kelamin }}</td>
+          <td>{{ g.no_hp|default:'-' }}</td>
+          <td class="aksi">
+            <a href="{% url 'guru_ubah' g.pk %}">Ubah</a>
+            <form method="post" action="{% url 'guru_reset_password' g.pk %}"
+                  onsubmit="return confirm('Kembalikan password {{ g.nama|escapejs }} ke tanggal lahir?')">
+              {% csrf_token %}
+              <button type="submit" class="tautan">Reset password</button>
+            </form>
+            <a href="{% url 'guru_hapus' g.pk %}" class="bahaya">Hapus</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="kosong">Belum ada data guru.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if halaman.has_other_pages %}
+  <div class="paginasi">
+    {% if halaman.has_previous %}
+      <a href="?q={{ kata_kunci|urlencode }}&halaman={{ halaman.previous_page_number }}">← Sebelumnya</a>
+    {% endif %}
+    <span>Halaman {{ halaman.number }} dari {{ halaman.paginator.num_pages }}</span>
+    {% if halaman.has_next %}
+      <a href="?q={{ kata_kunci|urlencode }}&halaman={{ halaman.next_page_number }}">Berikutnya →</a>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

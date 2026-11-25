@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block judul %}Rekap Absensi{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Rekap Absensi</h1>
+    {% if kelas %}<p>Kelas {{ kelas.nama }} · {{ bulan|date:"F Y" }}</p>{% endif %}
+  </div>
+  <a href="{% url 'absensi_harian' %}{% if kelas %}?kelas={{ kelas.pk }}{% endif %}" class="tombol-aksi tombol-sekunder">← Isi Absensi</a>
+</div>
+
+{% if not kelas %}
+  <div class="info">{{ catatan }}</div>
+{% else %}
+  <form method="get" class="bilah-cari">
+    <select name="kelas" onchange="this.form.submit()">
+      {% for k in daftar_kelas %}
+        <option value="{{ k.pk }}" {% if k.pk == kelas.pk %}selected{% endif %}>{{ k.nama }} ({{ k.tahun_ajaran }})</option>
+      {% endfor %}
+    </select>
+    <input type="month" name="bulan" value="{{ bulan|date:'Y-m' }}"
+           max="{{ hari_ini|date:'Y-m' }}" onchange="this.form.submit()">
+  </form>
+
+  <div class="tabel-bungkus">
+    <table class="tabel">
+      <thead>
+        <tr>
+          <th>No</th><th>NIS</th><th>Nama</th>
+          <th>Hadir</th><th>Sakit</th><th>Izin</th><th>Alpa</th>
+          <th>Total</th><th>Kehadiran</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in baris %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ b.siswa.nis }}</td>
+            <td>{{ b.siswa.nama }}</td>
+            <td>{{ b.siswa.hadir }}</td>
+            <td>{{ b.siswa.sakit }}</td>
+            <td>{{ b.siswa.izin }}</td>
+            <td>{{ b.siswa.alpa }}</td>
+            <td>{{ b.total }}</td>
+            <td>{% if b.persen is not None %}{{ b.persen }}%{% else %}-{% endif %}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="9" class="kosong">Belum ada siswa di kelas ini.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+{% endblock %}

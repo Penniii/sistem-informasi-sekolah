@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block judul %}Jam Pelajaran{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Jam Pelajaran</h1>
+    <p>{{ daftar|length }} jam pelajaran</p>
+  </div>
+  <a href="{% url 'jam_tambah' %}" class="tombol-aksi">+ Tambah Jam Pelajaran</a>
+</div>
+
+<div class="tabel-bungkus">
+  <table class="tabel">
+    <thead>
+      <tr><th>Jam ke</th><th>Mulai</th><th>Selesai</th><th>Aksi</th></tr>
+    </thead>
+    <tbody>
+      {% for j in daftar %}
+        <tr>
+          <td>{{ j.urutan }}</td>
+          <td>{{ j.mulai|time:"H:i" }}</td>
+          <td>{{ j.selesai|time:"H:i" }}</td>
+          <td class="aksi">
+            <a href="{% url 'jam_ubah' j.pk %}">Ubah</a>
+            <a href="{% url 'jam_hapus' j.pk %}" class="bahaya">Hapus</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4" class="kosong">Belum ada jam pelajaran.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

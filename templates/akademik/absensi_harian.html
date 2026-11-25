@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block judul %}Absensi Harian{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Absensi Harian</h1>
+    {% if kelas %}<p>Kelas {{ kelas.nama }} · {{ kelas.tahun_ajaran }}</p>{% endif %}
+  </div>
+  <a href="{% url 'absensi_rekap' %}{% if kelas %}?kelas={{ kelas.pk }}{% endif %}" class="tombol-aksi tombol-sekunder">Lihat Rekap</a>
+</div>
+
+{% if not kelas %}
+  <div class="info">{{ catatan }}</div>
+{% else %}
+  <form method="get" class="bilah-cari">
+    <select name="kelas" onchange="this.form.submit()">
+      {% for k in daftar_kelas %}
+        <option value="{{ k.pk }}" {% if k.pk == kelas.pk %}selected{% endif %}>{{ k.nama }} ({{ k.tahun_ajaran }})</option>
+      {% endfor %}
+    </select>
+    <input type="date" name="tanggal" value="{{ tanggal|date:'Y-m-d' }}"
+           max="{{ hari_ini|date:'Y-m-d' }}" onchange="this.form.submit()">
+    <span class="lencana {% if sudah_tercatat %}lencana-hijau{% endif %}" style="align-self: center;">
+      {% if sudah_tercatat %}Sudah tercatat{% else %}Belum diisi{% endif %}
+    </span>
+  </form>
+
+  <form method="post">
+    {% csrf_token %}
+    {% include 'akademik/_tabel_status.html' %}
+
+    {% if baris %}
+      <div class="aksi-form">
+        <button type="submit" class="tombol-aksi">Simpan Absensi</button>
+      </div>
+    {% endif %}
+  </form>
+{% endif %}
+{% endblock %}

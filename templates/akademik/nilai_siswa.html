@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block judul %}Nilai Saya{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Nilai Saya</h1>
+    {% if kelas %}<p>Kelas {{ kelas.nama }} · {{ kelas.tahun_ajaran }}</p>{% endif %}
+  </div>
+  {% if siswa and kelas %}
+    <a href="{% url 'rapor' siswa.pk %}?semester={{ semester }}" class="tombol-aksi tombol-sekunder">Lihat Rapor</a>
+  {% endif %}
+</div>
+
+{% if catatan %}
+  <div class="info">{{ catatan }}</div>
+{% else %}
+  <form method="get" class="bilah-cari">
+    <select name="semester" onchange="this.form.submit()">
+      {% for nilai, nama in daftar_semester %}
+        <option value="{{ nilai }}" {% if nilai == semester %}selected{% endif %}>Semester {{ nama }}</option>
+      {% endfor %}
+    </select>
+  </form>
+
+  <div class="tabel-bungkus">
+    <table class="tabel">
+      <thead>
+        <tr>
+          <th>Mata pelajaran</th><th>Tugas</th><th>UTS</th><th>UAS</th>
+          <th>Nilai akhir</th><th>Predikat</th><th>Keterangan</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in baris %}
+          <tr>
+            <td>{{ b.mapel.nama }}<br><small class="redup">KKM {{ b.mapel.kkm }}</small></td>
+            {% if b.nilai %}
+              <td>{{ b.nilai.tugas|floatformat:"-2"|default:"-" }}</td>
+              <td>{{ b.nilai.uts|floatformat:"-2"|default:"-" }}</td>
+              <td>{{ b.nilai.uas|floatformat:"-2"|default:"-" }}</td>
+              <td>
+                {% if b.nilai.nilai_akhir is not None %}
+                  <strong>{{ b.nilai.nilai_akhir|floatformat:"-2" }}</strong>
+                {% else %}-{% endif %}
+              </td>
+              <td>{{ b.nilai.predikat|default:"-" }}</td>
+              <td>
+                {% if b.nilai.nilai_akhir is None %}
+                  <span class="lencana lencana-kuning">Belum lengkap</span>
+                {% elif b.nilai.tuntas %}
+                  <span class="lencana lencana-hijau">Tuntas</span>
+                {% else %}
+                  <span class="lencana lencana-merah">Di bawah KKM</span>
+                {% endif %}
+              </td>
+            {% else %}
+              <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+              <td><span class="lencana">Belum ada nilai</span></td>
+            {% endif %}
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="kosong">Belum ada mata pelajaran di jadwal kelas Anda.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if rata_rata is not None %}
+    <p style="margin-top: 16px;">Rata-rata nilai akhir semester ini: <strong>{{ rata_rata|floatformat:"-2" }}</strong></p>
+  {% endif %}
+{% endif %}
+{% endblock %}

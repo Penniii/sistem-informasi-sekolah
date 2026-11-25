@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block judul %}Dashboard{% endblock %}
+
+{% block isi %}
+<section class="sambutan">
+  <span class="lencana lencana-terang">{{ user.get_peran_display }}</span>
+  <h1>Halo, {{ user.get_full_name|default:user.username }}!</h1>
+  <p>Selamat datang di Sistem Informasi Sekolah.</p>
+</section>
+
+{% if stat %}
+  {% include 'akun/_statistik_tu.html' %}
+{% endif %}
+<h2 class="judul-bagian">Menu Anda</h2>
+<div class="grid-kartu">
+
+  {% if user.peran == 'TU' %}
+    <a href="{% url 'siswa_daftar' %}" class="kartu-menu kartu-tautan">
+      <div class="ikon">🧑‍🎓</div>
+      <h3>Data Siswa</h3>
+      <p>Kelola data siswa beserta akun loginnya.</p>
+      <span class="lencana">Buka</span>
+    </a>
+    <a href="{% url 'guru_daftar' %}" class="kartu-menu kartu-tautan">
+      <div class="ikon">👩‍🏫</div>
+      <h3>Data Guru</h3>
+      <p>Kelola data guru dan wali kelas.</p>
+      <span class="lencana">Buka</span>
+    </a>
+    <a href="{% url 'kelas_daftar' %}" class="kartu-menu kartu-tautan">
+      <div class="ikon">🏫</div>
+      <h3>Kelas</h3>
+      <p>Atur kelas, wali kelas, dan daftar siswanya.</p>
+      <span class="lencana">Buka</span>
+    </a>
+    <a href="{% url 'mapel_daftar' %}" class="kartu-menu kartu-tautan">
+      <div class="ikon">📚</div>
+      <h3>Mata Pelajaran</h3>
+      <p>Kelola daftar mata pelajaran.</p>
+      <span class="lencana">Buka</span>
+    </a>
+
+    {% elif user.peran == 'GURU' %}
+    <a href="{% url 'jadwal_guru' %}" class="kartu-menu kartu-tautan">
+      <div class="ikon">📅</div>
+      <h3>Jadwal Mengajar</h3>
+      <p>Lihat jadwal mengajar Anda dalam seminggu.</p>
+      <span class="lencana">Buka</span>
+    </a>
+    <a href="{% url 'absensi_harian' %}" class="kartu-menu kartu-tautan">
+      <div class="ikon">📋</div>
+      <h3>Absensi Harian</h3>
+      <p>Catat kehadiran siswa di kelas yang Anda walikan.</p>
+      <span class="lencana">Buka</span>
+    </a>
+    <a href="{% url 'absensi_pelajaran' %}" class="kartu-menu kartu-tautan">
+      <div class="ikon">📝</div>
+      <h3>Absensi Pelajaran</h3>
+      <p>Catat kehadiran siswa di pelajaran yang Anda ajar hari ini.</p>
+      <span class="lencana">Buka</span>
+    </a>
+    <a href="{% url 'nilai_daftar' %}" class="kartu-menu kartu-tautan">
+      <div class="ikon">🧮</div>
+      <h3>Input Nilai</h3>
+      <p>Isi nilai tugas, UTS, dan UAS kelas yang Anda ajar.</p>
+      <span class="lencana">Buka</span>
+    </a>
+
+  {% else %}
+    <a href="{% url 'jadwal_siswa' %}" class="kartu-menu kartu-tautan">
+      <div class="ikon">📅</div>
+      <h3>Jadwal Pelajaran</h3>
+      <p>Lihat jadwal pelajaran kelas Anda.</p>
+      <span class="lencana">Buka</span>
+    </a>
+    <a href="{% url 'nilai_siswa' %}" class="kartu-menu kartu-tautan">
+      <div class="ikon">🏅</div>
+      <h3>Nilai Saya</h3>
+      <p>Lihat nilai tugas, UTS, UAS, dan nilai akhir Anda.</p>
+      <span class="lencana">Buka</span>
+    </a>
+  {% endif %}
+
+</div>
+{% endblock %}

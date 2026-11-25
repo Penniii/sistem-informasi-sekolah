@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block judul %}Kelas {{ kelas.nama }}{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Kelas {{ kelas.nama }}</h1>
+    <p>Tahun ajaran {{ kelas.tahun_ajaran }}</p>
+  </div>
+  <a href="{% url 'kelas_ubah' kelas.pk %}" class="tombol-aksi">Ubah Kelas</a>
+</div>
+
+<dl class="rincian kartu-form">
+  <div><dt>Tingkat</dt><dd>{{ kelas.get_tingkat_display }}</dd></div>
+  <div><dt>Wali kelas</dt><dd>{{ kelas.wali_kelas|default:'Belum ditentukan' }}</dd></div>
+  <div><dt>Jumlah siswa</dt><dd>{{ daftar_siswa|length }}</dd></div>
+</dl>
+
+<h2 class="judul-bagian">Daftar Siswa</h2>
+<div class="tabel-bungkus">
+  <table class="tabel">
+    <thead>
+      <tr><th>NIS</th><th>Nama</th><th>L/P</th><th>Aksi</th></tr>
+    </thead>
+    <tbody>
+      {% for s in daftar_siswa %}
+        <tr>
+          <td>{{ s.nis }}</td>
+          <td>{{ s.nama }}</td>
+          <td>{{ s.jenis_kelamin }}</td>
+          <td class="aksi"><a href="{% url 'siswa_ubah' s.pk %}">Ubah</a></td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4" class="kosong">
+            Belum ada siswa di kelas ini. Tambahkan lewat Data Siswa → Ubah → pilih kelas.
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<p style="margin-top: 16px;">
+  <a href="{% url 'kelas_daftar' %}?tahun={{ kelas.tahun_ajaran_id }}" class="tombol-batal" style="margin-left: 0;">← Kembali ke daftar kelas</a>
+</p>
+{% endblock %}

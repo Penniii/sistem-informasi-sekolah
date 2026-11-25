@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block judul %}Input Nilai{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Input Nilai</h1>
+    {% if tahun %}<p>Tahun ajaran {{ tahun.nama }} · Semester {{ tahun.get_semester_aktif_display }}</p>{% endif %}
+  </div>
+</div>
+
+{% if catatan %}
+  <div class="info">{{ catatan }}</div>
+{% else %}
+  <div class="tabel-bungkus">
+    <table class="tabel">
+      <thead>
+        <tr>
+          <th>Kelas</th><th>Mata pelajaran</th>
+          {% if user.peran == 'TU' %}<th>Guru</th>{% endif %}
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in daftar %}
+          <tr>
+            <td>{{ d.kelas__nama }}</td>
+            <td>{{ d.mapel__nama }}</td>
+            {% if user.peran == 'TU' %}<td>{{ d.guru__nama }}</td>{% endif %}
+            <td class="aksi">
+              <a href="{% url 'nilai_isi' d.kelas_id d.mapel_id %}">Input Nilai</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="kosong">Belum ada kelas dan mata pelajaran yang Anda ajar di jadwal.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+{% endblock %}

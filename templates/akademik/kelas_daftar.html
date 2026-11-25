@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block judul %}Kelas{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Kelas</h1>
+    <p>{{ daftar|length }} kelas ditemukan</p>
+  </div>
+  <a href="{% url 'kelas_tambah' %}" class="tombol-aksi">+ Tambah Kelas</a>
+</div>
+
+<form method="get" class="bilah-cari">
+  <select name="tahun" onchange="this.form.submit()">
+    <option value="">Semua tahun ajaran</option>
+    {% for t in daftar_tahun %}
+      <option value="{{ t.pk }}" {% if t.pk|stringformat:'s' == tahun_id %}selected{% endif %}>
+        {{ t.nama }}{% if t.aktif %} (aktif){% endif %}
+      </option>
+    {% endfor %}
+  </select>
+</form>
+
+<div class="tabel-bungkus">
+  <table class="tabel">
+    <thead>
+      <tr>
+        <th>Kelas</th><th>Tingkat</th><th>Tahun ajaran</th>
+        <th>Wali kelas</th><th>Siswa</th><th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for k in daftar %}
+        <tr>
+          <td><a href="{% url 'kelas_detail' k.pk %}" class="tautan-nama">{{ k.nama }}</a></td>
+          <td>{{ k.get_tingkat_display }}</td>
+          <td>{{ k.tahun_ajaran }}</td>
+          <td>{{ k.wali_kelas|default:'-' }}</td>
+          <td>{{ k.jumlah_siswa }}</td>
+          <td class="aksi">
+            <a href="{% url 'kelas_ubah' k.pk %}">Ubah</a>
+            <a href="{% url 'kelas_hapus' k.pk %}" class="bahaya">Hapus</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="kosong">Belum ada kelas untuk pilihan ini.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

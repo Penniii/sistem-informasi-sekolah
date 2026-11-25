@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block judul %}Sistem Sekolah{% endblock %} | Sistem Informasi Sekolah</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="{% if user.is_authenticated %}app{% else %}tamu{% endif %}">
+
+  {% if user.is_authenticated %}
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-ikon">🎓</span>
+      <span>Sistem Sekolah</span>
+    </div>
+
+    <nav class="menu">
+      <a href="{% url 'dashboard' %}" class="{% if request.path == '/' %}aktif{% endif %}">🏠 Dashboard</a>
+
+      {% if user.peran == 'TU' %}
+        <div class="menu-judul">Data Master</div>
+        <a href="{% url 'siswa_daftar' %}" class="{% if '/siswa/' in request.path %}aktif{% endif %}">🧑‍🎓 Data Siswa</a>
+        <a href="{% url 'guru_daftar' %}" class="{% if '/guru/' in request.path %}aktif{% endif %}">👩‍🏫 Data Guru</a>
+        <a href="{% url 'kelas_daftar' %}" class="{% if '/kelas/' in request.path %}aktif{% endif %}">🏫 Kelas</a>
+        <a href="{% url 'mapel_daftar' %}" class="{% if '/mapel/' in request.path %}aktif{% endif %}">📚 Mata Pelajaran</a>
+        <a href="{% url 'tahun_ajaran_daftar' %}" class="{% if '/tahun-ajaran/' in request.path %}aktif{% endif %}">🗓️ Tahun Ajaran</a>
+        <a href="{% url 'jam_daftar' %}" class="{% if '/jam-pelajaran/' in request.path %}aktif{% endif %}">⏰ Jam Pelajaran</a>
+
+        <div class="menu-judul">Akademik</div>
+        <a href="{% url 'jadwal_daftar' %}" class="{% if '/jadwal/' in request.path %}aktif{% endif %}">📅 Jadwal Pelajaran</a>
+        <a href="{% url 'absensi_harian' %}" class="{% if '/absensi/harian/' in request.path %}aktif{% endif %}">✅ Absensi Harian</a>
+        <a href="{% url 'absensi_pelajaran' %}" class="{% if '/absensi/pelajaran/' in request.path %}aktif{% endif %}">📝 Absensi Pelajaran</a>
+        <a href="{% url 'nilai_daftar' %}" class="{% if '/nilai/' in request.path %}aktif{% endif %}">🧮 Input Nilai</a>
+        <a href="{% url 'leger' %}" class="{% if '/leger/' in request.path %}aktif{% endif %}">📑 Leger Nilai</a>  
+        <a href="{% url 'absensi_rekap' %}" class="{% if '/absensi/rekap/' in request.path %}aktif{% endif %}">📊 Rekap Absensi</a>
+
+      {% elif user.peran == 'GURU' %}
+        <div class="menu-judul">Akademik</div>
+        <a href="{% url 'jadwal_guru' %}" class="{% if '/jadwal-mengajar/' in request.path %}aktif{% endif %}">📅 Jadwal Mengajar</a>
+        <a href="{% url 'absensi_harian' %}" class="{% if '/absensi/harian/' in request.path %}aktif{% endif %}">✅ Absensi Harian</a>
+        <a href="{% url 'absensi_pelajaran' %}" class="{% if '/absensi/pelajaran/' in request.path %}aktif{% endif %}">📝 Absensi Pelajaran</a>
+        <a href="{% url 'nilai_daftar' %}" class="{% if '/nilai/' in request.path %}aktif{% endif %}">🧮 Input Nilai</a>
+        <a href="{% url 'leger' %}" class="{% if '/leger/' in request.path %}aktif{% endif %}">📑 Leger Nilai</a>
+        <a href="{% url 'absensi_rekap' %}" class="{% if '/absensi/rekap/' in request.path %}aktif{% endif %}">📊 Rekap Absensi</a>
+
+      {% elif user.peran == 'SISWA' %}
+        <div class="menu-judul">Akademik</div>
+        <a href="{% url 'jadwal_siswa' %}" class="{% if '/jadwal-kelas/' in request.path %}aktif{% endif %}">📅 Jadwal Pelajaran</a>
+        <a href="{% url 'nilai_siswa' %}" class="{% if '/nilai-saya/' in request.path %}aktif{% endif %}">🏅 Nilai Saya</a>
+      {% endif %}
+
+      <div class="menu-judul">Akun</div>
+      {% if user.peran == 'TU' %}
+        <a href="/admin/">⚙️ Panel Admin</a>
+      {% endif %}
+      <a href="{% url 'ganti_password' %}" class="{% if 'ganti-password' in request.path %}aktif{% endif %}">🔑 Ganti Password</a>
+    </nav>
+
+    <div class="sidebar-bawah">
+      <div class="pengguna-nama">{{ user.get_full_name|default:user.username }}</div>
+      <div class="pengguna-peran">{{ user.get_peran_display }}</div>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="tombol-keluar">Keluar</button>
+      </form>
+    </div>
+  </aside>
+  {% endif %}
+
+  <div class="konten">
+    <main>
+      {% for pesan in messages %}
+        <div class="pesan pesan-{{ pesan.tags }}">{{ pesan }}</div>
+      {% endfor %}
+
+      {% block isi %}{% endblock %}
+    </main>
+  </div>
+
+  <script src="{% static 'js/password.js' %}"></script>
+
+</body>
+</html>

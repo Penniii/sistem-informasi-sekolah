@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block judul %}Tahun Ajaran{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Tahun Ajaran</h1>
+    <p>{{ daftar|length }} tahun ajaran</p>
+  </div>
+  <a href="{% url 'tahun_ajaran_tambah' %}" class="tombol-aksi">+ Tambah Tahun Ajaran</a>
+</div>
+
+<div class="tabel-bungkus">
+  <table class="tabel">
+    <thead>
+      <tr><th>Tahun ajaran</th><th>Status</th><th>Aksi</th></tr>
+    </thead>
+    <tbody>
+      {% for t in daftar %}
+        <tr>
+          <td>{{ t.nama }}</td>
+          <td>
+            {% if t.aktif %}
+              <span class="lencana lencana-hijau">Aktif</span>
+            {% else %}
+              <span class="lencana">Tidak aktif</span>
+            {% endif %}
+          </td>
+          <td class="aksi">
+            <a href="{% url 'tahun_ajaran_ubah' t.pk %}">Ubah</a>
+            <a href="{% url 'tahun_ajaran_hapus' t.pk %}" class="bahaya">Hapus</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3" class="kosong">Belum ada tahun ajaran.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

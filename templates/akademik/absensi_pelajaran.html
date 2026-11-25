@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block judul %}Absensi Pelajaran{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Absensi Pelajaran</h1>
+    <p>{{ nama_hari }}, {{ tanggal|date:"j F Y" }}</p>
+  </div>
+</div>
+
+<form method="get" class="bilah-cari">
+  <input type="date" name="tanggal" value="{{ tanggal|date:'Y-m-d' }}"
+         max="{{ hari_ini|date:'Y-m-d' }}" onchange="this.form.submit()">
+  {% if tanggal != hari_ini %}
+    <a href="{% url 'absensi_pelajaran' %}" class="tombol-aksi tombol-sekunder">Kembali ke hari ini</a>
+  {% endif %}
+</form>
+
+{% if catatan %}
+  <div class="info">{{ catatan }}</div>
+{% else %}
+  <div class="tabel-bungkus">
+    <table class="tabel">
+      <thead>
+        <tr>
+          <th>Jam</th><th>Kelas</th><th>Mata pelajaran</th>
+          {% if user.peran == 'TU' %}<th>Guru</th>{% endif %}
+          <th>Status absensi</th><th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for j in daftar %}
+          <tr>
+            <td>
+              Jam ke-{{ j.jam.urutan }}<br>
+              <small class="redup">{{ j.jam.mulai|time:"H:i" }}–{{ j.jam.selesai|time:"H:i" }}</small>
+            </td>
+            <td>{{ j.kelas.nama }}</td>
+            <td>{{ j.mapel.nama }}</td>
+            {% if user.peran == 'TU' %}<td>{{ j.guru.nama }}</td>{% endif %}
+            <td>
+              {% if j.tercatat %}
+                <span class="lencana lencana-hijau">Sudah diabsen</span>
+                <small class="redup">{{ j.tidak_hadir }} tidak hadir</small>
+              {% else %}
+                <span class="lencana">Belum diabsen</span>
+              {% endif %}
+            </td>
+            <td class="aksi">
+              <a href="{% url 'absensi_pelajaran_isi' j.pk %}?tanggal={{ tanggal|date:'Y-m-d' }}">
+                {% if j.tercatat %}Ubah{% else %}Isi Absensi{% endif %}
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="kosong">Tidak ada jadwal mengajar pada tanggal ini.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+{% endblock %}

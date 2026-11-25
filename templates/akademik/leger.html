@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block judul %}Leger Nilai{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Leger Nilai</h1>
+    {% if kelas %}<p>Kelas {{ kelas.nama }} · {{ kelas.tahun_ajaran }}</p>{% endif %}
+  </div>
+</div>
+
+{% if not kelas %}
+  <div class="info">{{ catatan }}</div>
+{% else %}
+  <form method="get" class="bilah-cari">
+    <select name="kelas" onchange="this.form.submit()">
+      {% for k in daftar_kelas %}
+        <option value="{{ k.pk }}" {% if k.pk == kelas.pk %}selected{% endif %}>{{ k.nama }} ({{ k.tahun_ajaran }})</option>
+      {% endfor %}
+    </select>
+    <select name="semester" onchange="this.form.submit()">
+      {% for nilai, nama in daftar_semester %}
+        <option value="{{ nilai }}" {% if nilai == semester %}selected{% endif %}>Semester {{ nama }}</option>
+      {% endfor %}
+    </select>
+  </form>
+
+  <div class="tabel-bungkus">
+    <table class="tabel leger">
+      <thead>
+        <tr>
+          <th>No</th><th>NIS</th><th>Nama</th>
+          {% for m in daftar_mapel %}<th>{{ m.nama }}</th>{% endfor %}
+          <th>Rata-rata</th><th>Peringkat</th><th>Rapor</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in baris %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ b.siswa.nis }}</td>
+            <td>{{ b.siswa.nama }}</td>
+            {% for s in b.sel %}
+              <td class="{% if s.kurang %}sel-kurang{% endif %}">
+                {% if s.nilai is not None %}{{ s.nilai|floatformat:"-2" }}{% else %}-{% endif %}
+              </td>
+            {% endfor %}
+            <td><strong>{% if b.rata is not None %}{{ b.rata|floatformat:"-2" }}{% else %}-{% endif %}</strong></td>
+            <td>{% if b.peringkat %}{{ b.peringkat }}{% else %}-{% endif %}</td>
+            <td class="aksi"><a href="{% url 'rapor' b.siswa.pk %}?semester={{ semester }}">Lihat</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="kosong">Belum ada siswa di kelas ini.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="redup" style="margin-top: 12px;">Nilai berwarna merah berada di bawah KKM mata pelajaran tersebut.</p>
+{% endif %}
+{% endblock %}

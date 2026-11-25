@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block judul %}Masuk{% endblock %}
+
+{% block isi %}
+<div class="kartu-login">
+  <div class="login-kepala">
+    <div class="logo-ikon logo-besar">🎓</div>
+    <h1>Sistem Informasi Sekolah</h1>
+    <p>Silakan masuk untuk melanjutkan</p>
+  </div>
+
+  {% if form.errors %}
+    <div class="alert">Username atau password salah. Coba lagi.</div>
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <div class="field">
+      <label for="{{ form.username.id_for_label }}">Username</label>
+      {{ form.username }}
+    </div>
+
+    <div class="field">
+      <label for="{{ form.password.id_for_label }}">Password</label>
+      {{ form.password }}
+    </div>
+
+    <button type="submit" class="tombol">Masuk</button>
+  </form>
+</div>
+{% endblock %}

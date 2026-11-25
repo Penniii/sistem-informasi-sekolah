@@ -1,0 +1,15 @@
+# Lingkungan virtual dan cache Python
+venv/
+__pycache__/
+*.pyc
+
+# Database lokal (berisi akun dan data uji)
+db.sqlite3
+db_cadangan.sqlite3
+
+# Hasil collectstatic
+staticfiles/
+
+# Rahasia dan pengaturan editor
+.env
+.vscode/

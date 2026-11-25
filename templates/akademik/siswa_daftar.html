@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block judul %}Data Siswa{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>Data Siswa</h1>
+    <p>{{ halaman.paginator.count }} siswa ditemukan</p>
+  </div>
+  <a href="{% url 'siswa_tambah' %}" class="tombol-aksi">+ Tambah Siswa</a>
+</div>
+
+<form method="get" class="bilah-cari">
+  <input type="text" name="q" value="{{ kata_kunci }}" placeholder="Cari nama atau NIS...">
+  <select name="kelas">
+    <option value="">Semua kelas</option>
+    {% for k in daftar_kelas %}
+      <option value="{{ k.id }}" {% if k.id|stringformat:'s' == kelas_id %}selected{% endif %}>{{ k }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="tombol-aksi">Cari</button>
+</form>
+
+<div class="tabel-bungkus">
+  <table class="tabel">
+    <thead>
+      <tr><th>NIS</th><th>Nama</th><th>L/P</th><th>Kelas</th><th>Aksi</th></tr>
+    </thead>
+    <tbody>
+      {% for s in halaman %}
+        <tr>
+          <td>{{ s.nis }}</td>
+          <td>{{ s.nama }}</td>
+          <td>{{ s.jenis_kelamin }}</td>
+          <td>{{ s.kelas|default:'-' }}</td>
+          <td class="aksi">
+            <a href="{% url 'siswa_ubah' s.pk %}">Ubah</a>
+            <form method="post" action="{% url 'siswa_reset_password' s.pk %}"
+                  onsubmit="return confirm('Kembalikan password {{ s.nama|escapejs }} ke tanggal lahir?')">
+              {% csrf_token %}
+              <button type="submit" class="tautan">Reset password</button>
+            </form>
+            <a href="{% url 'siswa_hapus' s.pk %}" class="bahaya">Hapus</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="kosong">Belum ada data siswa.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if halaman.has_other_pages %}
+  <div class="paginasi">
+    {% if halaman.has_previous %}
+      <a href="?q={{ kata_kunci|urlencode }}&kelas={{ kelas_id }}&halaman={{ halaman.previous_page_number }}">← Sebelumnya</a>
+    {% endif %}
+    <span>Halaman {{ halaman.number }} dari {{ halaman.paginator.num_pages }}</span>
+    {% if halaman.has_next %}
+      <a href="?q={{ kata_kunci|urlencode }}&kelas={{ kelas_id }}&halaman={{ halaman.next_page_number }}">Berikutnya →</a>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

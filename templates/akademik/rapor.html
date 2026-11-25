@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block judul %}Rapor {{ siswa.nama }}{% endblock %}
+
+{% block isi %}
+{% if catatan %}
+  <div class="info">{{ catatan }}</div>
+{% else %}
+  <div class="kepala-halaman no-print">
+    <div>
+      <h1>Rapor</h1>
+      <p>{{ siswa.nama }} · Kelas {{ kelas.nama }}</p>
+    </div>
+    <button type="button" class="tombol-aksi" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
+  </div>
+
+  <form method="get" class="bilah-cari no-print">
+    <select name="semester" onchange="this.form.submit()">
+      {% for nilai, nama in daftar_semester %}
+        <option value="{{ nilai }}" {% if nilai == semester %}selected{% endif %}>Semester {{ nama }}</option>
+      {% endfor %}
+    </select>
+    <label class="isian-tanggal">
+      Periode kehadiran
+      <input type="date" name="dari" value="{{ dari|date:'Y-m-d' }}">
+      s.d.
+      <input type="date" name="sampai" value="{{ sampai|date:'Y-m-d' }}">
+    </label>
+    <button type="submit" class="tombol-aksi tombol-sekunder">Terapkan</button>
+  </form>
+
+  <article class="rapor">
+    <header class="rapor-kepala">
+      <h2>{{ nama_sekolah }}</h2>
+      <p>{{ alamat_sekolah }}</p>
+      <h3>LAPORAN HASIL BELAJAR (RAPOR)</h3>
+    </header>
+
+    <dl class="rapor-identitas">
+      <div><dt>Nama</dt><dd>{{ siswa.nama }}</dd></div>
+      <div><dt>Kelas</dt><dd>{{ kelas.nama }}</dd></div>
+      <div><dt>NIS</dt><dd>{{ siswa.nis }}</dd></div>
+      <div><dt>Semester</dt><dd>{{ semester_label }}</dd></div>
+      <div><dt>Wali kelas</dt><dd>{{ wali_kelas.nama|default:"-" }}</dd></div>
+      <div><dt>Tahun ajaran</dt><dd>{{ tahun.nama }}</dd></div>
+    </dl>
+
+    <h4>A. Nilai Akademik</h4>
+    <table class="rapor-tabel">
+      <thead>
+        <tr>
+          <th>No</th><th>Mata Pelajaran</th><th>KKM</th>
+          <th>Tugas</th><th>UTS</th><th>UAS</th>
+          <th>Nilai Akhir</th><th>Predikat</th><th>Keterangan</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in baris %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ b.mapel.nama }}</td>
+            <td>{{ b.mapel.kkm }}</td>
+            {% if b.nilai %}
+              <td>{{ b.nilai.tugas|floatformat:"-2"|default:"-" }}</td>
+              <td>{{ b.nilai.uts|floatformat:"-2"|default:"-" }}</td>
+              <td>{{ b.nilai.uas|floatformat:"-2"|default:"-" }}</td>
+              <td><strong>{% if b.nilai.nilai_akhir is not None %}{{ b.nilai.nilai_akhir|floatformat:"-2" }}{% else %}-{% endif %}</strong></td>
+              <td>{{ b.nilai.predikat|default:"-" }}</td>
+              <td>
+                {% if b.nilai.nilai_akhir is None %}Belum lengkap
+                {% elif b.nilai.tuntas %}Tuntas
+                {% else %}Belum tuntas{% endif %}
+              </td>
+            {% else %}
+              <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>Belum ada nilai</td>
+            {% endif %}
+          </tr>
+        {% empty %}
+          <tr><td colspan="9">Belum ada mata pelajaran.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="rapor-ringkas">
+      Rata-rata nilai akhir: <strong>{% if rata_rata is not None %}{{ rata_rata|floatformat:"-2" }}{% else %}-{% endif %}</strong>
+      {% if peringkat %} · Peringkat: <strong>{{ peringkat }}</strong> dari {{ jumlah_siswa }} siswa{% endif %}
+    </p>
+
+    <h4>B. Kehadiran</h4>
+    <table class="rapor-tabel">
+      <thead>
+        <tr><th>Hadir</th><th>Sakit</th><th>Izin</th><th>Tanpa Keterangan (Alpa)</th><th>Total Hari Tercatat</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>{{ hadir }}</td><td>{{ sakit }}</td><td>{{ izin }}</td><td>{{ alpa }}</td><td>{{ total_hari }}</td></tr>
+      </tbody>
+    </table>
+    <p class="rapor-ringkas redup">Periode: {{ dari|date:"j F Y" }} s.d. {{ sampai|date:"j F Y" }}</p>
+
+    <div class="rapor-ttd">
+      <div>
+        <p>Orang Tua / Wali</p>
+        <div class="ruang"></div>
+        <p class="nama">&nbsp;</p>
+      </div>
+      <div>
+        <p>Wali Kelas</p>
+        <div class="ruang"></div>
+        <p class="nama">{{ wali_kelas.nama|default:"&nbsp;" }}</p>
+      </div>
+      <div>
+        <p>Kepala Sekolah</p>
+        <div class="ruang"></div>
+        <p class="nama">{{ kepala_sekolah }}</p>
+      </div>
+    </div>
+    <p class="rapor-ringkas redup" style="text-align: right;">Dicetak {{ hari_ini|date:"j F Y" }}</p>
+  </article>
+{% endif %}
+{% endblock %}

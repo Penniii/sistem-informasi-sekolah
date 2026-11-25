@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block judul %}Input Nilai{% endblock %}
+
+{% block isi %}
+<div class="kepala-halaman">
+  <div>
+    <h1>{{ mapel.nama }}</h1>
+    <p>Kelas {{ kelas.nama }} · {{ kelas.tahun_ajaran }} · KKM {{ mapel.kkm }}</p>
+  </div>
+  <a href="{% url 'nilai_daftar' %}" class="tombol-aksi tombol-sekunder">← Kembali</a>
+</div>
+
+<form method="get" class="bilah-cari">
+  <select name="semester" onchange="this.form.submit()">
+    {% for nilai, nama in daftar_semester %}
+      <option value="{{ nilai }}" {% if nilai == semester %}selected{% endif %}>Semester {{ nama }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+<div class="info">
+  Nilai akhir = Tugas {{ bobot.tugas }}% + UTS {{ bobot.uts }}% + UAS {{ bobot.uas }}%.
+  Nilai akhir muncul setelah ketiga komponen terisi.
+</div>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="tabel-bungkus">
+    <table class="tabel">
+      <thead>
+        <tr>
+          <th>No</th><th>NIS</th><th>Nama</th>
+          <th>Tugas</th><th>UTS</th><th>UAS</th>
+          <th>Nilai akhir</th><th>Predikat</th><th>Keterangan</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in baris %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ b.siswa.nis }}</td>
+            <td>{{ b.siswa.nama }}</td>
+            <td><input type="number" name="tugas_{{ b.siswa.pk }}" value="{{ b.tugas }}" min="0" max="100" step="0.01" class="isian-angka"></td>
+            <td><input type="number" name="uts_{{ b.siswa.pk }}" value="{{ b.uts }}" min="0" max="100" step="0.01" class="isian-angka"></td>
+            <td><input type="number" name="uas_{{ b.siswa.pk }}" value="{{ b.uas }}" min="0" max="100" step="0.01" class="isian-angka"></td>
+            <td>
+              {% if b.nilai and b.nilai.nilai_akhir is not None %}
+                <strong>{{ b.nilai.nilai_akhir|floatformat:"-2" }}</strong>
+              {% else %}-{% endif %}
+            </td>
+            <td>{% if b.nilai %}{{ b.nilai.predikat }}{% endif %}</td>
+            <td>
+              {% if b.nilai %}
+                {% if b.nilai.nilai_akhir is None %}
+                  <span class="lencana lencana-kuning">Belum lengkap</span>
+                {% elif b.nilai.tuntas %}
+                  <span class="lencana lencana-hijau">Tuntas</span>
+                {% else %}
+                  <span class="lencana lencana-merah">Di bawah KKM</span>
+                {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="9" class="kosong">Belum ada siswa di kelas ini.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if baris %}
+    <div class="aksi-form">
+      <button type="submit" class="tombol-aksi">Simpan Nilai</button>
+    </div>
+  {% endif %}
+</form>
+{% endblock %}

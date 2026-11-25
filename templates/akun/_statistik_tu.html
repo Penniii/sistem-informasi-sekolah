@@ -1,0 +1,73 @@
+<h2 class="judul-bagian">
+  Ringkasan
+  {% if stat.tahun %}Tahun Ajaran {{ stat.tahun.nama }} · Semester {{ stat.tahun.get_semester_aktif_display }}{% endif %}
+</h2>
+
+<div class="stat-grid">
+  <div class="stat-kartu"><span class="stat-angka">{{ stat.jumlah_siswa }}</span><span class="stat-nama">Siswa</span></div>
+  <div class="stat-kartu"><span class="stat-angka">{{ stat.jumlah_guru }}</span><span class="stat-nama">Guru</span></div>
+  <div class="stat-kartu"><span class="stat-angka">{{ stat.jumlah_kelas }}</span><span class="stat-nama">Kelas</span></div>
+  <div class="stat-kartu"><span class="stat-angka">{{ stat.jumlah_mapel }}</span><span class="stat-nama">Mata pelajaran</span></div>
+</div>
+
+<div class="panel-grid">
+
+  <section class="panel">
+    <h3>
+      Kehadiran
+      {% if stat.hari_ini.tanggal %}<small class="redup">· {{ stat.hari_ini.tanggal|date:"j F Y" }}</small>{% endif %}
+    </h3>
+    {% if stat.hari_ini.total %}
+      <div class="donat-baris">
+        <div class="donat" style="background: {{ stat.hari_ini.donat }};">
+          <div class="donat-lubang">
+            <strong>{{ stat.hari_ini.persen_hadir }}%</strong>
+            <span>hadir</span>
+          </div>
+        </div>
+        <ul class="legenda">
+          {% for l in stat.hari_ini.legenda %}
+            <li>
+              <span class="titik" style="background: {{ l.warna }};"></span>
+              {{ l.nama }} <strong>{{ l.jumlah }}</strong>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% else %}
+      <p class="redup">Belum ada absensi harian yang tercatat.</p>
+    {% endif %}
+  </section>
+
+  <section class="panel">
+    <h3>Tren kehadiran <small class="redup">· 7 hari terakhir</small></h3>
+    {% include 'akun/_batang.html' with daftar=stat.tren kosong='Belum ada data absensi.' %}
+  </section>
+
+  <section class="panel">
+    <h3>Rata-rata nilai per kelas</h3>
+    {% include 'akun/_batang.html' with daftar=stat.nilai_per_kelas kosong='Belum ada nilai pada semester ini.' %}
+  </section>
+
+  <section class="panel">
+    <h3>Ketuntasan per mata pelajaran <small class="redup">· siswa yang mencapai KKM</small></h3>
+    {% include 'akun/_batang.html' with daftar=stat.tuntas_per_mapel kosong='Belum ada nilai pada semester ini.' %}
+  </section>
+
+  <section class="panel">
+    <h3>Perlu perhatian <small class="redup">· alpa 30 hari terakhir</small></h3>
+    {% if stat.perhatian %}
+      <ul class="daftar-baris">
+        {% for p in stat.perhatian %}
+          <li>
+            <span>{{ p.nama }} <small class="redup">· {{ p.kelas|default:"-" }}</small></span>
+            <strong>{{ p.jumlah }}×</strong>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="redup">Tidak ada siswa yang alpa dalam 30 hari terakhir.</p>
+    {% endif %}
+  </section>
+
+</div>
