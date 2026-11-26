@@ -147,3 +147,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+# Asal permintaan tepercaya untuk formulir (diisi di server bila perlu)
+CSRF_TRUSTED_ORIGINS = [o for o in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if o]
