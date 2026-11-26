@@ -4,7 +4,7 @@ Aplikasi web untuk mengelola kegiatan akademik sekolah menengah pertama: data si
 
 > Proyek portfolio. Dibuat dari nol sebagai latihan merancang sistem informasi yang realistis, mulai dari autentikasi hingga pelaporan.
 
-**Demo:** ⟨https://penni.pythonanywhere.com⟩
+**Demo:** ⟨https://penni.pythonanywhere.com/⟩
 
 ## Tampilan
 
